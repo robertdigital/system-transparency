@@ -51,14 +51,17 @@ if [ -f "${dir}/${initramfs_name_compressed}" ]; then
 fi
 if "${develop}" ; then
     echo "[INFO]: create initramfs with full tooling for development"
-    GOPATH="${gopath}" u-root -build=bb -uinitcmd=stboot -o "${dir}/${initramfs_name}" \
+    GOPATH="${gopath}" u-root -build=bb -initcmd=/bbin/cpuserver -o "${dir}/${initramfs_name}" \
     -files "${dir}/include/${var_file}:etc/${var_file}" \
     -files "${dir}/data/https-root-certificates.pem:root/${https_roots_file}" \
     -files "${dir}/data/network.json:root/${network_file}" \
     -files "${dir}/data/provisioning-servers.json:root/${prov_servers_file}" \
     -files "${dir}/data/ntp-servers.json:root/${ntp_server_file}" \
     -files "${dir}/include/netsetup.elv:root/netsetup.elv" \
+    -files "${dir}/include/ssh_host_rsa_key:etc/ssh/ssh_host_rsa_key" \
+    -files "${dir}/include/cpu_rsa.pub:key.pub" \
     core \
+    github.com/u-root/cpu/cmds/cpuserver \
     github.com/u-root/u-root/cmds/boot/stboot \
     || { echo -e "creating initramfs $failed"; exit 1; }
 else
